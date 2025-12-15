@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   FiShoppingCart,
   FiMenu,
   FiX,
   FiUser,
-  FiSearch
+  FiSearch,
+  FiLogOut
 } from 'react-icons/fi';
 import logo from '../assets/canvas-logo.png';
 
@@ -12,6 +14,14 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [cartCount] = useState(0);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -23,7 +33,6 @@ export default function Header() {
     }
   };
 
-  // Detect active section on scroll
   useEffect(() => {
     const sections = ['home', 'categories', 'products', 'features'];
 
@@ -46,6 +55,13 @@ export default function Header() {
     return () => observer.disconnect();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    window.location.href = '/';
+  };
+
   const navItemClass = (id) =>
     `cursor-pointer transition font-medium ${
       activeSection === id
@@ -57,7 +73,6 @@ export default function Header() {
     <header className="w-full bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
 
-        {/* Logo */}
         <div
           onClick={() => scrollToSection('home')}
           className="flex items-center gap-2 cursor-pointer"
@@ -68,7 +83,6 @@ export default function Header() {
           </span>
         </div>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           <button onClick={() => scrollToSection('home')} className={navItemClass('home')}>
             Home
@@ -84,10 +98,8 @@ export default function Header() {
           </button>
         </nav>
 
-        {/* Right Side */}
         <div className="flex items-center gap-4">
 
-          {/* Search */}
           <div className="hidden sm:flex items-center border rounded px-2 py-1">
             <FiSearch className="text-gray-400" />
             <input
@@ -97,15 +109,35 @@ export default function Header() {
             />
           </div>
 
-          {/* Profile (NO hardcoded user) */}
-          <button
-            className="text-gray-700 hover:text-blue-600 transition"
-            title="Profile"
-          >
-            <FiUser className="w-6 h-6" />
-          </button>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <Link to="/profile" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition">
+                {user.profileImage ? (
+                  <img src={user.profileImage} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
+                ) : (
+                  <FiUser className="w-5 h-5" />
+                )}
+                <span className="hidden sm:inline">{user.name}</span>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="text-gray-700 hover:text-red-600 transition"
+                title="Logout"
+              >
+                <FiLogOut className="w-5 h-5" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link to="/login" className="text-gray-700 hover:text-blue-600 transition">
+                Login
+              </Link>
+              <Link to="/register" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+                Sign Up
+              </Link>
+            </div>
+          )}
 
-          {/* Cart */}
           <button className="relative text-gray-700 hover:text-blue-600 transition">
             <FiShoppingCart className="w-6 h-6" />
             {cartCount > 0 && (
@@ -115,14 +147,12 @@ export default function Header() {
             )}
           </button>
 
-          {/* Mobile Menu */}
           <button onClick={toggleMenu} className="md:hidden text-gray-700">
             {isMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
       {isMenuOpen && (
         <nav className="md:hidden bg-white border-t px-4 py-3 space-y-3">
           {['home', 'categories', 'products', 'features'].map((id) => (
@@ -134,6 +164,27 @@ export default function Header() {
               {id.charAt(0).toUpperCase() + id.slice(1)}
             </button>
           ))}
+          <div className="pt-3 border-t">
+            {user ? (
+              <>
+                <Link to="/profile" className="block py-2 text-gray-700 hover:text-blue-600">
+                  Profile
+                </Link>
+                <button onClick={handleLogout} className="block w-full text-left py-2 text-gray-700 hover:text-red-600">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="block py-2 text-gray-700 hover:text-blue-600">
+                  Login
+                </Link>
+                <Link to="/register" className="block py-2 text-gray-700 hover:text-blue-600">
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
         </nav>
       )}
     </header>

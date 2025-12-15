@@ -5,7 +5,7 @@ require("dotenv").config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // For base64 images
 
 // Connect to MongoDB
 mongoose
@@ -15,15 +15,17 @@ mongoose
 
 // Import routes
 const productRoutes = require("./routes/products");
+const authRoutes = require("./routes/auth");
 
 // Register routes
 app.use("/api/products", productRoutes);
+app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running");
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
