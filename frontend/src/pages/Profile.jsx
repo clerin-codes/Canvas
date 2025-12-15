@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Profile = () => {
@@ -158,6 +158,19 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
+      {/* Back to Home Button - Added at top */}
+      <div className="max-w-4xl mx-auto mb-6">
+        <Link 
+          to="/" 
+          className="inline-flex items-center text-indigo-600 hover:text-indigo-800 transition"
+        >
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Home
+        </Link>
+      </div>
+
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           {/* Header */}
@@ -192,12 +205,20 @@ const Profile = () => {
                   <p className="text-indigo-100">{user.email}</p>
                 </div>
               </div>
-              <button
-                onClick={handleLogout}
-                className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
-              >
-                Logout
-              </button>
+              <div className="flex space-x-3">
+                <Link
+                  to="/"
+                  className="bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-lg font-semibold hover:bg-white/30 transition border border-white/30"
+                >
+                  Home
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
 
@@ -268,13 +289,21 @@ const Profile = () => {
                   <p className="text-sm text-gray-500 mt-2">Email cannot be changed</p>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Saving...' : 'Save Changes'}
-                </button>
+                <div className="flex space-x-4 pt-4">
+                  <Link
+                    to="/"
+                    className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition text-center"
+                  >
+                    Back to Home
+                  </Link>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
               </form>
             )}
 
@@ -320,13 +349,21 @@ const Profile = () => {
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Changing...' : 'Change Password'}
-                </button>
+                <div className="flex space-x-4 pt-4">
+                  <Link
+                    to="/"
+                    className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition text-center"
+                  >
+                    Back to Home
+                  </Link>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Changing...' : 'Change Password'}
+                  </button>
+                </div>
               </form>
             )}
 
@@ -341,13 +378,21 @@ const Profile = () => {
                   </p>
                 </div>
 
-                <button
-                  onClick={deleteAccount}
-                  disabled={loading}
-                  className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Deleting...' : 'Delete My Account'}
-                </button>
+                <div className="flex space-x-4">
+                  <Link
+                    to="/"
+                    className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition text-center"
+                  >
+                    Back to Home
+                  </Link>
+                  <button
+                    onClick={deleteAccount}
+                    disabled={loading}
+                    className="flex-1 bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Deleting...' : 'Delete My Account'}
+                  </button>
+                </div>
               </div>
             )}
           </div>
