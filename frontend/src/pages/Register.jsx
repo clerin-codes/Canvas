@@ -75,6 +75,21 @@ const Register = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       
+      // Merge guest cart into server cart
+      const guest = JSON.parse(localStorage.getItem('guest_cart') || '[]');
+      if (guest.length > 0) {
+      try {
+      await axios.post(
+      'http://localhost:5000/api/cart/merge',
+      { items: guest },
+      { headers: { 'x-auth-token': token } }
+      );
+      localStorage.removeItem('guest_cart');
+      } catch (mergeErr) {
+      console.error('Cart merge failed:', mergeErr);
+      }
+      }
+      
       navigate('/');
       
     } catch (err) {

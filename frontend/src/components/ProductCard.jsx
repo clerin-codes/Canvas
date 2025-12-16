@@ -7,11 +7,7 @@ export default function ProductCard({ product }) {
   const [showModal, setShowModal] = useState(false);
 
   const handleAddToCartClick = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
+    // Open modal for both guests and logged-in users
     setShowModal(true);
   };
 

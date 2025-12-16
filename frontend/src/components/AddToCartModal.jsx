@@ -20,22 +20,38 @@ export default function AddToCartModal({ product, onClose }) {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post(
-        'http://localhost:5000/api/cart/add',
-        {
-          productId: product._id,
-          size: selectedSize,
-          quantity
-        },
-        {
-          headers: { 'x-auth-token': token }
+      const payload = {
+        productId: product._id,
+        size: selectedSize,
+        quantity,
+      };
+
+      if (token) {
+        await axios.post('http://localhost:5000/api/cart/add', payload, {
+          headers: { 'x-auth-token': token },
+        });
+      } else {
+        // Guest cart in localStorage
+        const key = 'guest_cart';
+        const existing = JSON.parse(localStorage.getItem(key) || '[]');
+        // Try to find same product+size
+        const idx = existing.findIndex(
+          (i) => i.productId === payload.productId && i.size === payload.size
+        );
+        if (idx > -1) {
+          existing[idx].quantity += payload.quantity;
+        } else {
+          existing.push(payload);
         }
-      );
+        localStorage.setItem(key, JSON.stringify(existing));
+      }
 
       setSuccess(true);
       setTimeout(() => {
-        window.location.reload(); // Refresh to update cart count
-      }, 1000);
+        // Soft-refresh: dispatch a storage event-like update for header count consumers
+        window.dispatchEvent(new Event('storage'));
+        window.location.reload();
+      }, 800);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to add to cart');
     } finally {

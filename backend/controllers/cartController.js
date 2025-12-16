@@ -1,11 +1,43 @@
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 
+// Helper: add or update a single item in a cart doc (no save)
+async function upsertCartItem(cart, { productId, size, quantity }) {
+  // Validate product
+  const product = await Product.findById(productId);
+  if (!product) {
+    throw new Error('Product not found');
+  }
+  if (!product.sizes.includes(size)) {
+    throw new Error('Size not available');
+  }
+  if (product.stock < quantity) {
+    throw new Error('Insufficient stock');
+  }
+
+  const existingItemIndex = cart.items.findIndex(
+    (item) => item.product.toString() === String(productId) && item.size === size
+  );
+
+  if (existingItemIndex > -1) {
+    cart.items[existingItemIndex].quantity += quantity;
+  } else {
+    cart.items.push({
+      product: productId,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      size,
+      quantity,
+    });
+  }
+}
+
 // Get user's cart
 exports.getCart = async (req, res) => {
   try {
     let cart = await Cart.findOne({ user: req.user.id }).populate('items.product');
-    
+
     if (!cart) {
       cart = await Cart.create({ user: req.user.id, items: [] });
     }
@@ -14,13 +46,13 @@ exports.getCart = async (req, res) => {
       success: true,
       cart,
       total: cart.getTotal(),
-      totalItems: cart.getTotalItems()
+      totalItems: cart.getTotalItems(),
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Error fetching cart',
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -30,56 +62,12 @@ exports.addToCart = async (req, res) => {
   try {
     const { productId, size, quantity = 1 } = req.body;
 
-    // Validate product
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found'
-      });
-    }
-
-    // Check if size is available
-    if (!product.sizes.includes(size)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Size not available'
-      });
-    }
-
-    // Check stock
-    if (product.stock < quantity) {
-      return res.status(400).json({
-        success: false,
-        message: 'Insufficient stock'
-      });
-    }
-
     let cart = await Cart.findOne({ user: req.user.id });
-
     if (!cart) {
       cart = new Cart({ user: req.user.id, items: [] });
     }
 
-    // Check if item with same product and size already exists
-    const existingItemIndex = cart.items.findIndex(
-      item => item.product.toString() === productId && item.size === size
-    );
-
-    if (existingItemIndex > -1) {
-      // Update quantity
-      cart.items[existingItemIndex].quantity += quantity;
-    } else {
-      // Add new item
-      cart.items.push({
-        product: productId,
-        name: product.name,
-        price: product.price,
-        imageUrl: product.imageUrl,
-        size,
-        quantity
-      });
-    }
+    await upsertCartItem(cart, { productId, size, quantity });
 
     await cart.save();
     await cart.populate('items.product');
@@ -89,13 +77,13 @@ exports.addToCart = async (req, res) => {
       message: 'Item added to cart',
       cart,
       total: cart.getTotal(),
-      totalItems: cart.getTotalItems()
+      totalItems: cart.getTotalItems(),
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Error adding to cart',
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -221,5 +209,39 @@ exports.clearCart = async (req, res) => {
       message: 'Error clearing cart',
       error: error.message
     });
+  }
+};
+
+// Merge guest cart items into user's cart
+exports.mergeCart = async (req, res) => {
+  try {
+    const { items } = req.body; // [{ productId, size, quantity }]
+    if (!Array.isArray(items)) {
+      return res.status(400).json({ success: false, message: 'Items must be an array' });
+    }
+
+    let cart = await Cart.findOne({ user: req.user.id });
+    if (!cart) {
+      cart = new Cart({ user: req.user.id, items: [] });
+    }
+
+    for (const guestItem of items) {
+      const { productId, size, quantity = 1 } = guestItem || {};
+      if (!productId || !size || !quantity) continue;
+      await upsertCartItem(cart, { productId, size, quantity });
+    }
+
+    await cart.save();
+    await cart.populate('items.product');
+
+    res.json({
+      success: true,
+      message: 'Cart merged',
+      cart,
+      total: cart.getTotal(),
+      totalItems: cart.getTotalItems(),
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error merging cart', error: error.message });
   }
 };

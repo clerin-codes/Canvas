@@ -31,15 +31,22 @@ export default function Header() {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
-      fetchCartCount();
     }
+    fetchCartCount();
+
+    // Update cart count on storage changes (guest cart updates in other tabs/components)
+    const onStorage = () => fetchCartCount();
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, []);
 
   const fetchCartCount = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        setCartCount(0);
+        const guest = JSON.parse(localStorage.getItem('guest_cart') || '[]');
+        const total = guest.reduce((sum, item) => sum + (item.quantity || 0), 0);
+        setCartCount(total);
         return;
       }
       const res = await axios.get("http://localhost:5000/api/cart", {
@@ -137,7 +144,8 @@ export default function Header() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    setCartCount(0);
+    // On logout, keep guest cart intact (do nothing) but recompute count
+    fetchCartCount();
     navigate("/");
   };
 

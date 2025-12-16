@@ -6,7 +6,8 @@ const {
   addToCart,
   updateCartItem,
   removeFromCart,
-  clearCart
+  clearCart,
+  mergeCart,
 } = require('../controllers/cartController');
 
 // All cart routes require authentication
@@ -26,5 +27,8 @@ router.delete('/item/:itemId', removeFromCart);
 
 // Clear cart
 router.delete('/clear', clearCart);
+
+// Merge guest cart into user cart
+router.post('/merge', mergeCart);
 
 module.exports = router;

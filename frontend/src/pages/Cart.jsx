@@ -14,7 +14,48 @@ export default function Cart() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      navigate('/login');
+      // Load guest cart from localStorage with hydration
+      const guest = JSON.parse(localStorage.getItem('guest_cart') || '[]');
+      if (guest.length === 0) {
+        setCart({ items: [] });
+        setLoading(false);
+        return;
+      }
+      const hydrate = async () => {
+        try {
+          const items = await Promise.all(
+            guest.map(async (g) => {
+              try {
+                const res = await axios.get(`http://localhost:5000/api/products/${g.productId}`);
+                const p = res.data.product;
+                return {
+                  _id: `${g.productId}_${g.size}`,
+                  product: { _id: g.productId },
+                  name: p.name,
+                  imageUrl: p.imageUrl,
+                  price: p.price,
+                  size: g.size,
+                  quantity: g.quantity,
+                };
+              } catch (e) {
+                return {
+                  _id: `${g.productId}_${g.size}`,
+                  product: { _id: g.productId },
+                  name: 'Product',
+                  imageUrl: 'https://via.placeholder.com/96x96?text=Item',
+                  price: 0,
+                  size: g.size,
+                  quantity: g.quantity,
+                };
+              }
+            })
+          );
+          setCart({ items });
+        } finally {
+          setLoading(false);
+        }
+      };
+      hydrate();
       return;
     }
     fetchCart();
@@ -40,12 +81,28 @@ export default function Cart() {
     setUpdating(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.put(
-        `http://localhost:5000/api/cart/item/${itemId}`,
-        { quantity: newQuantity },
-        { headers: { 'x-auth-token': token } }
-      );
-      setCart(res.data.cart);
+      if (!token) {
+        const guest = JSON.parse(localStorage.getItem('guest_cart') || '[]');
+        const [pid, size] = itemId.split('_');
+        const idx = guest.findIndex((i) => i.productId === pid && i.size === size);
+        if (idx > -1) {
+          guest[idx].quantity = newQuantity;
+          localStorage.setItem('guest_cart', JSON.stringify(guest));
+          setCart((prev) => ({
+            ...prev,
+            items: prev.items.map((it) =>
+              it._id === itemId ? { ...it, quantity: newQuantity } : it
+            ),
+          }));
+        }
+      } else {
+        const res = await axios.put(
+          `http://localhost:5000/api/cart/item/${itemId}`,
+          { quantity: newQuantity },
+          { headers: { 'x-auth-token': token } }
+        );
+        setCart(res.data.cart);
+      }
     } catch (error) {
       alert(error.response?.data?.message || 'Failed to update quantity');
     } finally {
@@ -59,10 +116,18 @@ export default function Cart() {
     setUpdating(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.delete(`http://localhost:5000/api/cart/item/${itemId}`, {
-        headers: { 'x-auth-token': token }
-      });
-      setCart(res.data.cart);
+      if (!token) {
+        const guest = JSON.parse(localStorage.getItem('guest_cart') || '[]');
+        const [pid, size] = itemId.split('_');
+        const next = guest.filter((i) => !(i.productId === pid && i.size === size));
+        localStorage.setItem('guest_cart', JSON.stringify(next));
+        setCart((prev) => ({ ...prev, items: prev.items.filter((it) => it._id !== itemId) }));
+      } else {
+        const res = await axios.delete(`http://localhost:5000/api/cart/item/${itemId}`, {
+          headers: { 'x-auth-token': token }
+        });
+        setCart(res.data.cart);
+      }
     } catch (error) {
       alert('Failed to remove item');
     } finally {
@@ -76,10 +141,15 @@ export default function Cart() {
     setUpdating(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.delete('http://localhost:5000/api/cart/clear', {
-        headers: { 'x-auth-token': token }
-      });
-      setCart(res.data.cart);
+      if (!token) {
+        localStorage.removeItem('guest_cart');
+        setCart({ items: [] });
+      } else {
+        const res = await axios.delete('http://localhost:5000/api/cart/clear', {
+          headers: { 'x-auth-token': token }
+        });
+        setCart(res.data.cart);
+      }
     } catch (error) {
       alert('Failed to clear cart');
     } finally {
@@ -89,7 +159,7 @@ export default function Cart() {
 
   const calculateTotal = () => {
     if (!cart?.items) return 0;
-    return cart.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.items.reduce((total, item) => total + ((item.price || 0) * item.quantity), 0);
   };
 
   const getTotalItems = () => {
@@ -147,15 +217,15 @@ export default function Cart() {
               {cart.items.map((item) => (
                 <div key={item._id} className="bg-white rounded-lg shadow-md p-4 flex gap-4">
                   <img
-                    src={item.imageUrl}
-                    alt={item.name}
+                    src={item.imageUrl || 'https://via.placeholder.com/96x96?text=Item'}
+                    alt={item.name || 'Item'}
                     className="w-24 h-24 object-cover rounded-lg"
                   />
 
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800">{item.name}</h3>
+                    <h3 className="font-semibold text-gray-800">{item.name || 'Product'}</h3>
                     <p className="text-sm text-gray-600 mt-1">Size: {item.size}</p>
-                    <p className="text-lg font-bold text-blue-600 mt-2">${item.price}</p>
+                    <p className="text-lg font-bold text-blue-600 mt-2">${item.price || 0}</p>
 
                     <div className="flex items-center gap-3 mt-3">
                       <button
@@ -185,7 +255,7 @@ export default function Cart() {
                       <FiTrash2 size={20} />
                     </button>
                     <p className="text-lg font-bold text-gray-800">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ${(((item.price || 0) * item.quantity)).toFixed(2)}
                     </p>
                   </div>
                 </div>
