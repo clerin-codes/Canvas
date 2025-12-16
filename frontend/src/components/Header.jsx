@@ -278,6 +278,13 @@ export default function Header() {
           {user ? (
             <div className="flex items-center gap-3">
               <Link
+                to="/orders"
+                className="text-gray-700 hover:text-blue-600 transition text-sm hidden sm:inline"
+                title="My Orders"
+              >
+                Orders
+              </Link>
+              <Link
                 to="/profile"
                 className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition"
               >
@@ -390,6 +397,12 @@ export default function Header() {
           <div className="pt-3 border-t">
             {user ? (
               <>
+                <Link
+                  to="/orders"
+                  className="block py-2 text-gray-700 hover:text-blue-600"
+                >
+                  My Orders
+                </Link>
                 <Link
                   to="/profile"
                   className="block py-2 text-gray-700 hover:text-blue-600"

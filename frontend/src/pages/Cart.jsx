@@ -292,7 +292,18 @@ export default function Cart() {
                   </div>
                 )}
 
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition mb-3">
+                <button
+                  onClick={() => {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                      alert('Please login to proceed to checkout');
+                      navigate('/login');
+                    } else {
+                      navigate('/checkout');
+                    }
+                  }}
+                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition mb-3"
+                >
                   Proceed to Checkout
                 </button>
 
