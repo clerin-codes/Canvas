@@ -26,8 +26,8 @@ const sendOrderConfirmationEmail = async (user, order) => {
         <td style="padding: 12px; text-align: left; color: #333;">${item.productName}</td>
         <td style="padding: 12px; text-align: center; color: #666;">${item.size}</td>
         <td style="padding: 12px; text-align: center; color: #666;">${item.quantity}</td>
-        <td style="padding: 12px; text-align: right; color: #666;">$${item.price.toFixed(2)}</td>
-        <td style="padding: 12px; text-align: right; color: #4F46E5; font-weight: bold;">$${(item.price * item.quantity).toFixed(2)}</td>
+        <td style="padding: 12px; text-align: right; color: #666;">LKR ${item.price.toFixed(2)}</td>
+        <td style="padding: 12px; text-align: right; color: #4F46E5; font-weight: bold;">LKR ${(item.price * item.quantity).toFixed(2)}</td>
       </tr>
     `
       )
@@ -72,7 +72,7 @@ const sendOrderConfirmationEmail = async (user, order) => {
               ${itemsHTML}
               <tr style="background-color: #f8f9fa;">
                 <td colspan="4" style="padding: 15px; text-align: right; font-weight: bold; color: #333; font-size: 16px;">Total Amount:</td>
-                <td style="padding: 15px; text-align: right; font-weight: bold; color: #4F46E5; font-size: 18px;">$${order.totalAmount.toFixed(2)}</td>
+                <td style="padding: 15px; text-align: right; font-weight: bold; color: #4F46E5; font-size: 18px;">LKR ${order.totalAmount.toFixed(2)}</td>
               </tr>
             </tbody>
           </table>
@@ -92,7 +92,7 @@ const sendOrderConfirmationEmail = async (user, order) => {
           <h4 style="color: #333; margin-top: 0;">🎁 Member Benefits Reminder:</h4>
           <ul style="color: #555; line-height: 1.8; margin: 10px 0; padding-left: 20px;">
             <li><strong>10% OFF</strong> on your next order - Use code: <strong style="color: #4F46E5;">CANVAS10</strong></li>
-            <li>Free shipping on orders above $50</li>
+            <li>Free shipping on orders above LKR 50</li>
             <li>Exclusive member-only deals</li>
             <li>Early access to new collections</li>
           </ul>
@@ -121,7 +121,7 @@ const sendOrderConfirmationEmail = async (user, order) => {
             <a href="mailto:support@canvasclothing.com" style="color: #4F46E5;">support@canvasclothing.com</a>
           </p>
           <p style="margin-top: 10px; color: #999;">
-            © 2024 Canvas Clothing Store. All rights reserved.
+            © 2025 Canvas Clothing Store. All rights reserved.
           </p>
         </div>
       </div>
@@ -146,10 +146,10 @@ Status: ✓ ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
 ${order.items.map(item => `
 ${item.productName}
 Size: ${item.size} | Quantity: ${item.quantity}
-Price: $${item.price.toFixed(2)} | Total: $${(item.price * item.quantity).toFixed(2)}
+Price: LKR ${item.price.toFixed(2)} | Total: LKR ${(item.price * item.quantity).toFixed(2)}
 `).join('\n')}
 
-Total Amount: $${order.totalAmount.toFixed(2)}
+Total Amount: LKR ${order.totalAmount.toFixed(2)}
 
 ✨ What Happens Next?
 1. We're preparing your order for shipment
@@ -159,7 +159,7 @@ Total Amount: $${order.totalAmount.toFixed(2)}
 
 🎁 Member Benefits Reminder:
 • 10% OFF on your next order - Use code: CANVAS10
-• Free shipping on orders above $50
+• Free shipping on orders above LKR 50
 • Exclusive member-only deals
 • Early access to new collections
 
@@ -175,7 +175,7 @@ Twitter: @canvasclothing
 
 Questions about your order? Contact us at support@canvasclothing.com
 
-© 2024 Canvas Clothing Store. All rights reserved.
+© 2025 Canvas Clothing Store. All rights reserved.
     `;
 
     await transporter.sendMail({

@@ -99,7 +99,7 @@ export default function AddToCartModal({ product, onClose }) {
               />
               <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
               <p className="text-gray-600 text-sm mt-1">{product.description}</p>
-              <p className="text-2xl font-bold text-blue-600 mt-2">${product.price}</p>
+              <p className="text-2xl font-bold text-blue-600 mt-2">LKR{product.price}</p>
             </div>
 
             {error && (

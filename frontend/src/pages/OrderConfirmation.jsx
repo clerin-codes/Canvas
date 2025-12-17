@@ -101,9 +101,9 @@ export default function OrderConfirmation() {
                       <td className="py-4 px-4 text-gray-800">{item.productName}</td>
                       <td className="py-4 px-4 text-center text-gray-800">{item.size}</td>
                       <td className="py-4 px-4 text-center text-gray-800">{item.quantity}</td>
-                      <td className="py-4 px-4 text-right text-gray-800">${item.price.toFixed(2)}</td>
+                      <td className="py-4 px-4 text-right text-gray-800">LKR{item.price.toFixed(2)}</td>
                       <td className="py-4 px-4 text-right font-semibold text-gray-800">
-                        ${calculateItemTotal(item.price, item.quantity).toFixed(2)}
+                        LKR{calculateItemTotal(item.price, item.quantity).toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -119,7 +119,7 @@ export default function OrderConfirmation() {
                 <div className="flex justify-between mb-3 pb-3 border-b">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="text-gray-800 font-semibold">
-                    ${order.totalAmount.toFixed(2)}
+                    LKR{order.totalAmount.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between mb-3 pb-3 border-b">
@@ -129,7 +129,7 @@ export default function OrderConfirmation() {
                 <div className="flex justify-between">
                   <span className="text-lg font-bold text-gray-800">Total Amount</span>
                   <span className="text-2xl font-bold text-blue-600">
-                    ${order.totalAmount.toFixed(2)}
+                    LKR{order.totalAmount.toFixed(2)}
                   </span>
                 </div>
               </div>

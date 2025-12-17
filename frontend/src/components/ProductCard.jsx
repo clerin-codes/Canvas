@@ -51,7 +51,7 @@ export default function ProductCard({ product }) {
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-2xl font-bold text-blue-600">${product.price}</span>
+            <span className="text-2xl font-bold text-blue-600">LKR{product.price}</span>
             <button
               onClick={handleAddToCartClick}
               disabled={product.stock === 0}

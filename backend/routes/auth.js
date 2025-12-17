@@ -91,7 +91,7 @@ router.post('/send-otp', async (req, res) => {
           <h4 style="color: #333; margin-top: 0;">🎁 Welcome to Canvas! Here's what you get:</h4>
           <ul style="color: #555; line-height: 1.8;">
             <li><strong>10% OFF</strong> on your first order</li>
-            <li>Free shipping on orders above $50</li>
+            <li>Free shipping on orders above LKR50</li>
             <li>Exclusive member-only deals</li>
             <li>Early access to new collections</li>
           </ul>
@@ -133,7 +133,7 @@ Your One-Time Password (OTP): ${otp}
 
 🎁 Welcome to Canvas! Here's what you get:
 • 10% OFF on your first order
-• Free shipping on orders above $50
+• Free shipping on orders above LKR50
 • Exclusive member-only deals
 • Early access to new collections
 

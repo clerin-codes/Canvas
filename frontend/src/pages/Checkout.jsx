@@ -200,7 +200,7 @@ export default function Checkout() {
                       <p className="text-sm text-gray-600">Size: {item.size} | Qty: {item.quantity}</p>
                     </div>
                     <p className="font-semibold text-gray-800">
-                      ${((item.price || 0) * item.quantity).toFixed(2)}
+                      LKR{((item.price || 0) * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 ))}
@@ -217,15 +217,15 @@ export default function Checkout() {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>LKR{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                  <span>{shipping === 0 ? 'FREE' : `LKR${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="border-t pt-3 flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-blue-600">${total.toFixed(2)}</span>
+                  <span className="text-blue-600">LKR{total.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -349,7 +349,7 @@ export default function Checkout() {
               <div className="bg-gray-50 p-4 rounded-lg mt-6">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-gray-700">Order Total:</span>
-                  <span className="text-2xl font-bold text-blue-600">${total.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-blue-600">LKR{total.toFixed(2)}</span>
                 </div>
               </div>
 

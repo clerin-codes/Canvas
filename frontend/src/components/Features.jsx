@@ -6,7 +6,7 @@ export default function Features() {
       id: 1,
       icon: FiTruck,
       title: 'Free Shipping',
-      description: 'Free shipping on orders over $500. Fast and reliable delivery to your doorstep.',
+      description: 'Free shipping on orders over LKR500. Fast and reliable delivery to your doorstep.',
     },
     {
       id: 2,

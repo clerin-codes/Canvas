@@ -225,7 +225,7 @@ export default function Cart() {
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800">{item.name || 'Product'}</h3>
                     <p className="text-sm text-gray-600 mt-1">Size: {item.size}</p>
-                    <p className="text-lg font-bold text-blue-600 mt-2">${item.price || 0}</p>
+                    <p className="text-lg font-bold text-blue-600 mt-2">LKR{item.price || 0}</p>
 
                     <div className="flex items-center gap-3 mt-3">
                       <button
@@ -255,7 +255,7 @@ export default function Cart() {
                       <FiTrash2 size={20} />
                     </button>
                     <p className="text-lg font-bold text-gray-800">
-                      ${(((item.price || 0) * item.quantity)).toFixed(2)}
+                      LKR{(((item.price || 0) * item.quantity)).toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -270,16 +270,16 @@ export default function Cart() {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
-                    <span>${calculateTotal().toFixed(2)}</span>
+                    <span>LKR{calculateTotal().toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Shipping</span>
-                    <span>{calculateTotal() >= 50 ? 'FREE' : '$5.00'}</span>
+                    <span>{calculateTotal() >= 50 ? 'FREE' : 'LKR5.00'}</span>
                   </div>
                   <div className="border-t pt-3 flex justify-between text-lg font-bold">
                     <span>Total</span>
                     <span className="text-blue-600">
-                      ${(calculateTotal() + (calculateTotal() >= 50 ? 0 : 5)).toFixed(2)}
+                      LKR{(calculateTotal() + (calculateTotal() >= 50 ? 0 : 5)).toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -287,7 +287,7 @@ export default function Cart() {
                 {calculateTotal() < 50 && (
                   <div className="bg-blue-50 border-l-4 border-blue-600 p-3 mb-4">
                     <p className="text-sm text-blue-800">
-                      Add ${(50 - calculateTotal()).toFixed(2)} more for FREE shipping!
+                      Add LKR{(50 - calculateTotal()).toFixed(2)} more for FREE shipping!
                     </p>
                   </div>
                 )}

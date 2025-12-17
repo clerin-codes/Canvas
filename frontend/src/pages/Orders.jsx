@@ -121,7 +121,7 @@ export default function Orders() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Total Amount</p>
-                        <p className="font-bold text-blue-600">${order.totalAmount.toFixed(2)}</p>
+                        <p className="font-bold text-blue-600">LKR{order.totalAmount.toFixed(2)}</p>
                       </div>
                     </div>
                   </div>
@@ -168,10 +168,10 @@ export default function Orders() {
                                 {item.quantity}
                               </td>
                               <td className="py-3 px-3 text-right text-gray-800">
-                                ${item.price.toFixed(2)}
+                                LKR{item.price.toFixed(2)}
                               </td>
                               <td className="py-3 px-3 text-right font-semibold text-gray-800">
-                                ${(item.price * item.quantity).toFixed(2)}
+                                LKR{(item.price * item.quantity).toFixed(2)}
                               </td>
                             </tr>
                           ))}
@@ -186,13 +186,13 @@ export default function Orders() {
                           <div className="flex justify-between mb-2 pb-2 border-b">
                             <span className="text-gray-600">Subtotal</span>
                             <span className="text-gray-800 font-semibold">
-                              ${order.totalAmount.toFixed(2)}
+                              LKR{order.totalAmount.toFixed(2)}
                             </span>
                           </div>
                           <div className="flex justify-between">
                             <span className="font-bold text-gray-800">Total</span>
                             <span className="font-bold text-blue-600">
-                              ${order.totalAmount.toFixed(2)}
+                              LKR{order.totalAmount.toFixed(2)}
                             </span>
                           </div>
                         </div>
